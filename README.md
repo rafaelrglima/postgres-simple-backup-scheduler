@@ -17,8 +17,8 @@ A lightweight, flexible PostgreSQL backup solution with configurable retention p
 
 ```bash
 # 1. Clone to recommended location
-sudo git clone https://github.com/rafaelrglima/postgres-simple-backup-scheduler.git /opt/postgres-simple-backup-scheduler
-cd /opt/postgres-simple-backup-scheduler
+sudo git clone https://github.com/rafaelrglima/postgres-simple-backup-scheduler.git /var/backups/postgres-simple-backup-scheduler
+cd /var/backups/postgres-simple-backup-scheduler
 
 # 2. Configure credentials
 sudo cp env.sample .env
@@ -38,11 +38,11 @@ sudo crontab -e
 
 **Copy-paste into crontab (Recommended Strategy):**
 ```bash
-# PostgreSQL Backups - /opt/postgres-simple-backup-scheduler
+# PostgreSQL Backups - /var/backups/postgres-simple-backup-scheduler
 # Hourly (every hour, retain 7 days), Weekly (Sunday, retain 30 days), Monthly (1st, retain 1 year)
-0 * * * * /opt/postgres-simple-backup-scheduler/backup.sh hourly 7 >/dev/null 2>&1
-0 0 * * 0 /opt/postgres-simple-backup-scheduler/backup.sh weekly 30 >/dev/null 2>&1
-0 0 1 * * /opt/postgres-simple-backup-scheduler/backup.sh monthly 365 >/dev/null 2>&1
+0 * * * * /var/backups/postgres-simple-backup-scheduler/backup.sh hourly 7 >/dev/null 2>&1
+0 0 * * 0 /var/backups/postgres-simple-backup-scheduler/backup.sh weekly 30 >/dev/null 2>&1
+0 0 1 * * /var/backups/postgres-simple-backup-scheduler/backup.sh monthly 365 >/dev/null 2>&1
 ```
 
 Done! ✓ Your databases will now backup automatically.
@@ -55,19 +55,19 @@ For Linux systems, the recommended installation paths are:
 
 | Path | Purpose | User |
 |------|---------|------|
-| `/opt/postgres-simple-backup-scheduler` | **Recommended** - System-wide, production use | root |
-| `/usr/local/bin/postgres-simple-backup-scheduler` | Alternative system-wide location | root |
+| `/var/backups/postgres-simple-backup-scheduler` | **Recommended** - System backups location | root |
+| `/opt/postgres-simple-backup-scheduler` | Alternative for optional software | root |
 | `~/postgres-simple-backup-scheduler` | Personal/development use | regular user |
 
-**Best Practice:** Use `/opt/postgres-simple-backup-scheduler` for production servers as it's the standard location for optional/add-on software packages.
+**Best Practice:** Use `/var/backups/postgres-simple-backup-scheduler` for production servers as `/var/backups/` is the standard Linux location for system backup files.
 
 ## Quick Start
 
 1. **Clone the repository:**
 ```bash
 # Recommended for production
-sudo git clone https://github.com/rafaelrglima/postgres-simple-backup-scheduler.git /opt/postgres-simple-backup-scheduler
-cd /opt/postgres-simple-backup-scheduler
+sudo git clone https://github.com/rafaelrglima/postgres-simple-backup-scheduler.git /var/backups/postgres-simple-backup-scheduler
+cd /var/backups/postgres-simple-backup-scheduler
 ```
 
 Or for personal use:
@@ -164,17 +164,17 @@ sudo crontab -e
 
 ```bash
 # PostgreSQL Automated Backups - Recommended Strategy
-# Script location: /opt/postgres-simple-backup-scheduler/backup.sh
+# Script location: /var/backups/postgres-simple-backup-scheduler/backup.sh
 # Format: minute hour day month weekday command
 
 # Hourly backups - top of every hour, retain 7 days (168 backups)
-0 * * * * /opt/postgres-simple-backup-scheduler/backup.sh hourly 7 >/dev/null 2>&1
+0 * * * * /var/backups/postgres-simple-backup-scheduler/backup.sh hourly 7 >/dev/null 2>&1
 
 # Weekly backups - Sunday at midnight, retain 30 days (4-5 backups)
-0 0 * * 0 /opt/postgres-simple-backup-scheduler/backup.sh weekly 30 >/dev/null 2>&1
+0 0 * * 0 /var/backups/postgres-simple-backup-scheduler/backup.sh weekly 30 >/dev/null 2>&1
 
 # Monthly backups - 1st of month at midnight, retain 1 year (12 backups)
-0 0 1 * * /opt/postgres-simple-backup-scheduler/backup.sh monthly 365 >/dev/null 2>&1
+0 0 1 * * /var/backups/postgres-simple-backup-scheduler/backup.sh monthly 365 >/dev/null 2>&1
 ```
 
 #### For Development (installed in home directory)
@@ -202,31 +202,31 @@ crontab -e
 **Minimal Setup (Daily only):**
 ```bash
 # Daily backup at 2 AM, keep for 30 days
-0 2 * * * /opt/postgres-simple-backup-scheduler/backup.sh daily 30 >/dev/null 2>&1
+0 2 * * * /var/backups/postgres-simple-backup-scheduler/backup.sh daily 30 >/dev/null 2>&1
 ```
 
 **Aggressive Backup Strategy (More frequent):**
 ```bash
 # Every 15 minutes, keep 3 days
-*/15 * * * * /opt/postgres-simple-backup-scheduler/backup.sh frequent 3 >/dev/null 2>&1
+*/15 * * * * /var/backups/postgres-simple-backup-scheduler/backup.sh frequent 3 >/dev/null 2>&1
 
 # Daily at 2 AM, keep 60 days
-0 2 * * * /opt/postgres-simple-backup-scheduler/backup.sh daily 60 >/dev/null 2>&1
+0 2 * * * /var/backups/postgres-simple-backup-scheduler/backup.sh daily 60 >/dev/null 2>&1
 
 # Weekly on Sunday, keep 180 days
-0 0 * * 0 /opt/postgres-simple-backup-scheduler/backup.sh weekly 180 >/dev/null 2>&1
+0 0 * * 0 /var/backups/postgres-simple-backup-scheduler/backup.sh weekly 180 >/dev/null 2>&1
 
 # Monthly on 1st, keep 730 days (2 years)
-0 0 1 * * /opt/postgres-simple-backup-scheduler/backup.sh monthly 730 >/dev/null 2>&1
+0 0 1 * * /var/backups/postgres-simple-backup-scheduler/backup.sh monthly 730 >/dev/null 2>&1
 ```
 
 **Conservative Setup (Less frequent, longer retention):**
 ```bash
 # Daily at 3 AM, keep 90 days
-0 3 * * * /opt/postgres-simple-backup-scheduler/backup.sh daily 90 >/dev/null 2>&1
+0 3 * * * /var/backups/postgres-simple-backup-scheduler/backup.sh daily 90 >/dev/null 2>&1
 
 # Monthly on 1st at midnight, keep 5 years
-0 0 1 * * /opt/postgres-simple-backup-scheduler/backup.sh monthly 1825 >/dev/null 2>&1
+0 0 1 * * /var/backups/postgres-simple-backup-scheduler/backup.sh monthly 1825 >/dev/null 2>&1
 ```
 
 #### Verify Crontab Configuration
@@ -268,7 +268,7 @@ After=postgresql.service
 
 [Service]
 Type=oneshot
-ExecStart=/opt/postgres-simple-backup-scheduler/backup.sh daily 30
+ExecStart=/var/backups/postgres-simple-backup-scheduler/backup.sh daily 30
 User=root
 ```
 
@@ -297,7 +297,7 @@ systemctl start postgres-backup-daily.timer
 After running backups, your directory structure will look like:
 
 ```
-/opt/postgres-simple-backup-scheduler/
+/var/backups/postgres-simple-backup-scheduler/
 ├── backup.sh                           # Main backup script
 ├── .env                                # Database credentials (git ignored)
 ├── env.sample                          # Example configuration template
@@ -432,8 +432,8 @@ Example log entry:
 
 Use monitoring tools to track backup job execution and alert on failures:
 - Cronitor, Healthchecks.io, or UptimeRobot for cron monitoring
-- Check log files regularly: `tail -f /opt/postgres-simple-backup-scheduler/daily/*.log`
-- Monitor disk space: `df -h /opt/postgres-simple-backup-scheduler/`
+- Check log files regularly: `tail -f /var/backups/postgres-simple-backup-scheduler/daily/*.log`
+- Monitor disk space: `df -h /var/backups/postgres-simple-backup-scheduler/`
 
 ## Security Best Practices
 
@@ -441,15 +441,15 @@ Use monitoring tools to track backup job execution and alert on failures:
 
 ```bash
 # Script executable by root only
-chmod 700 /opt/postgres-simple-backup-scheduler/backup.sh
+chmod 700 /var/backups/postgres-simple-backup-scheduler/backup.sh
 
 # Credentials readable by root only  
-chmod 600 /opt/postgres-simple-backup-scheduler/.env
+chmod 600 /var/backups/postgres-simple-backup-scheduler/.env
 
 # Backup directories (created automatically with these permissions)
-chmod 700 /opt/postgres-simple-backup-scheduler/hourly/
-chmod 700 /opt/postgres-simple-backup-scheduler/daily/
-chmod 700 /opt/postgres-simple-backup-scheduler/monthly/
+chmod 700 /var/backups/postgres-simple-backup-scheduler/hourly/
+chmod 700 /var/backups/postgres-simple-backup-scheduler/daily/
+chmod 700 /var/backups/postgres-simple-backup-scheduler/monthly/
 ```
 
 ### Credential Management
@@ -473,8 +473,8 @@ For production systems, consider:
 ### Permission Denied Error
 
 ```bash
-chmod 700 /opt/postgres-simple-backup-scheduler/backup.sh
-chmod 600 /opt/postgres-simple-backup-scheduler/.env
+chmod 700 /var/backups/postgres-simple-backup-scheduler/backup.sh
+chmod 600 /var/backups/postgres-simple-backup-scheduler/.env
 ```
 
 ### "ERROR: .env file not found"
@@ -518,7 +518,7 @@ Cron runs with minimal environment. Use full paths:
 */30 * * * * ./backup.sh hourly 7
 
 # Good
-*/30 * * * * /opt/postgres-simple-backup-scheduler/backup.sh hourly 7
+*/30 * * * * /var/backups/postgres-simple-backup-scheduler/backup.sh hourly 7
 ```
 
 Check cron logs:
@@ -552,7 +552,7 @@ You can create custom wrapper scripts for specialized needs:
 # custom-backup.sh - Backup with notifications
 
 # Run backup
-/opt/postgres-simple-backup-scheduler/backup.sh custom 14
+/var/backups/postgres-simple-backup-scheduler/backup.sh custom 14
 
 # Send notification on failure
 if [ $? -ne 0 ]; then
@@ -565,7 +565,7 @@ fi
 Create separate installations with different `.env` files:
 
 ```bash
-/opt/postgres-simple-backup-scheduler/
+/var/backups/postgres-simple-backup-scheduler/
 ├── prod/
 │   ├── backup.sh
 │   └── .env (prod database config)
