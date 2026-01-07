@@ -36,11 +36,12 @@ sudo crontab -e
 # Then paste this:
 ```
 
-**Copy-paste into crontab:**
+**Copy-paste into crontab (Recommended Strategy):**
 ```bash
 # PostgreSQL Backups - /opt/postgres-backups
-*/30 * * * * /opt/postgres-backups/backup.sh hourly 7 >/dev/null 2>&1
-0 2 * * * /opt/postgres-backups/backup.sh daily 30 >/dev/null 2>&1
+# Hourly (every hour, retain 7 days), Weekly (Sunday, retain 30 days), Monthly (1st, retain 1 year)
+0 * * * * /opt/postgres-backups/backup.sh hourly 7 >/dev/null 2>&1
+0 0 * * 0 /opt/postgres-backups/backup.sh weekly 30 >/dev/null 2>&1
 0 0 1 * * /opt/postgres-backups/backup.sh monthly 365 >/dev/null 2>&1
 ```
 
@@ -140,13 +141,15 @@ The main script accepts two parameters:
 
 ### Recommended Backup Strategy
 
-A typical production setup uses multiple backup frequencies with different retention policies:
+A balanced production setup with good coverage and manageable storage:
 
-| Frequency | Retention | Purpose |
-|-----------|-----------|---------|
-| Every 30 min | 7 days | Recent changes recovery |
-| Daily | 30 days | Short-term recovery |
-| Monthly | 365 days | Long-term archives |
+| Frequency | Schedule | Retention | Purpose | Storage Impact |
+|-----------|----------|-----------|---------|----------------|
+| Hourly | Every hour (top of hour) | 7 days | Recent changes recovery | 168 backups (~1 week) |
+| Weekly | Sunday at midnight | 30 days | Medium-term recovery | 4-5 backups (~1 month) |
+| Monthly | 1st of month at midnight | 365 days | Long-term archives | 12 backups (~1 year) |
+
+**Total storage:** ~184 backup sets at any given time (assuming similar database sizes)
 
 ### Crontab Configuration
 
@@ -160,17 +163,17 @@ sudo crontab -e
 **Copy-paste this complete configuration:**
 
 ```bash
-# PostgreSQL Automated Backups
+# PostgreSQL Automated Backups - Recommended Strategy
 # Script location: /opt/postgres-backups/backup.sh
 # Format: minute hour day month weekday command
 
-# Hourly backups - every 30 minutes, retain 7 days
-*/30 * * * * /opt/postgres-backups/backup.sh hourly 7 >/dev/null 2>&1
+# Hourly backups - top of every hour, retain 7 days (168 backups)
+0 * * * * /opt/postgres-backups/backup.sh hourly 7 >/dev/null 2>&1
 
-# Daily backups - 2 AM every day, retain 30 days
-0 2 * * * /opt/postgres-backups/backup.sh daily 30 >/dev/null 2>&1
+# Weekly backups - Sunday at midnight, retain 30 days (4-5 backups)
+0 0 * * 0 /opt/postgres-backups/backup.sh weekly 30 >/dev/null 2>&1
 
-# Monthly backups - midnight on 1st of month, retain 1 year
+# Monthly backups - 1st of month at midnight, retain 1 year (12 backups)
 0 0 1 * * /opt/postgres-backups/backup.sh monthly 365 >/dev/null 2>&1
 ```
 
