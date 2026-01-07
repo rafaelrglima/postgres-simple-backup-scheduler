@@ -5,9 +5,8 @@
 # and manages old backup files based on retention policy
 #
 # Installation:
-#   1. Copy .env.example to .env and configure your database credentials
+#   1. Copy env.sample to .env and configure your database credentials
 #   2. chmod 700 backup.sh
-#   3. Create schedule-specific scripts (hourly.sh, monthly.sh, etc.)
 #
 # Usage: ./backup.sh <backup_type> <retention_days>
 #   Example: ./backup.sh hourly 7
@@ -22,7 +21,7 @@ if [ -f "$ENV_FILE" ]; then
     source "$ENV_FILE"
 else
     echo "ERROR: .env file not found at $ENV_FILE"
-    echo "Please copy .env.example to .env and configure it."
+    echo "Please copy env.sample to .env and configure it."
     exit 1
 fi
 
